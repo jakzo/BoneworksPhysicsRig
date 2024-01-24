@@ -31,11 +31,40 @@ public class BwPhysicsRig : Rig {
   }
 
   public void OnAwake() {
-    // TODO
+    leftHand = m_leftHand.GetComponent<Hand>();
+    leftHand.SetManger(manager);
+    rightHand = m_rightHand.GetComponent<Hand>();
+    rightHand.SetManger(manager);
+
+    physBody = GetComponentInChildren<PhysBody>();
+    physBody.OnAwake();
+
+    _initialPelvisRotation = physBody.rbPelvis.rotation;
+    _ballLocoEnabled = true;
   }
 
   public void OnStart() {
-    // TODO
+    var bodyRefs = manager.gameWorldSkeletonRig.body.references;
+
+    leftHand.physHand.t1Vert = bodyRefs.c4Vertebra;
+    leftHand.physHand.shoulder = bodyRefs.rtScapula;
+    // TODO: Why elbow?
+    leftHand.physHand.wrist = bodyRefs.rightElbow;
+
+    leftHand.physHand.t1Vert = bodyRefs.c4Vertebra;
+    leftHand.physHand.shoulder = bodyRefs.leftShoulder;
+    leftHand.physHand.wrist = bodyRefs.leftWrist;
+
+    var prevRig =
+        manager.rigs[(rigIndex == 0 ? manager.rigs.Length : rigIndex) - 1];
+    leftHand.physHand.SetHand(
+        prevRig.m_leftHand.position, prevRig.m_leftHand.rotation, true
+    );
+    rightHand.physHand.SetHand(
+        prevRig.m_rightHand.position, prevRig.m_rightHand.rotation, true
+    );
+
+    physBody.OnStart();
   }
 
   public void OnUpdate() {
@@ -131,6 +160,10 @@ public class BwPhysicsRig : Rig {
   }
 
   public void OnAfterFixedUpdate() {
+    var gravityForce =
+        1f / (Time.fixedDeltaTime * Mathf.Abs(Physics.gravity.y) * 82f);
+    leftHand.physHand.ReadSensors(leftHand.joint, ref gravityForce);
+    rightHand.physHand.ReadSensors(rightHand.joint, ref gravityForce);
     // TODO
   }
 
@@ -145,15 +178,20 @@ public class BwPhysicsRig : Rig {
   }
 
   public void EnableBallLoco() {
-    // TODO
+    physBody.rbFeet.detectCollisions = true;
+    physBody.rbKnee.detectCollisions = true;
+    physBody.footballRadius = 0.18f;
+    physBody.bodyMassNaturalHold = false;
+    physBody.SetBodyMassDistribution();
   }
 
   public void DisableBallLoco() {
-    // TODO
-  }
-
-  public BwPhysicsRig() {
-    // TODO
+    physBody.rbFeet.detectCollisions = false;
+    physBody.rbKnee.detectCollisions = false;
+    physBody.footballRadius = 0.11f;
+    physBody.bodyMassNaturalHold = true;
+    physBody.SetBodyMassDistribution();
+    physBody.UpdateKnee(0f);
   }
 }
 }
