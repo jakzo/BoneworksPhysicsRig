@@ -1,4 +1,4 @@
-> **🚧 Currently in early development and unusable 🚧** (~5% done)
+> **🚧 Currently in early development and unusable 🚧** (~10% done)
 
 Reverse engineering effort of the PhysicsRig from Boneworks and porting it to Bonelab.
 

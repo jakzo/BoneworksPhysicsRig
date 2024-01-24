@@ -1,0 +1,6 @@
+{
+  "[csharp]": {
+    "editor.defaultFormatter": "mjohns.clang-format"
+  },
+  "C_Cpp.errorSquiggles": "disabled"
+}
