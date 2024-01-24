@@ -16,8 +16,7 @@ static class Layers {
   public static int DYNAMIC = LayerMask.NameToLayer("Dynamic");
 }
 
-public partial class BwPhysicsRig : MonoBehaviour {
-
+public class BwPhysicsRigSetup : MonoBehaviour {
   void Start() { CreateRigHierarchy(); }
 
   void CreateRigHierarchy() {
